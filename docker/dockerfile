@@ -1,0 +1,28 @@
+# Build this image using this command:
+#    docker build --build-arg USER_ID=$(id -u) --build-arg GROUP_ID=$(id -g) -t iccbot-env docker/
+
+# After building compile ICCBot using this command:
+#   docker run -it --rm \
+#         -v /home/weiminn/Documents/CovAgent:/CovAgent \
+#         -w /CovAgent/ICCBot \
+#         iccbot-env \
+#         mvn -f pom.xml clean package -DskipTests
+
+# And then copy the binary: `cp target/ICCBot-jar-with-dependencies.jar ICCBot.jar`
+
+FROM eclipse-temurin:11-jdk-alpine
+
+RUN apk add --no-cache maven
+
+ARG USER_ID=1014
+ARG GROUP_ID=1014
+ARG KVM_GID=108
+
+RUN addgroup -g ${GROUP_ID} hostuser || true \
+    && addgroup -g ${KVM_GID} kvm || true \
+    && adduser -D -u ${USER_ID} -G hostuser hostuser \
+    && addgroup hostuser kvm \
+    && mkdir -p /home/hostuser \
+    && chown -R ${USER_ID}:${GROUP_ID} /home/hostuser
+
+USER hostuser
