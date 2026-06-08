@@ -1,0 +1,3 @@
+[submodule "soot-dev-iccbot"]
+	path = soot-dev-iccbot
+	url = https://github.com/weiminn/soot-dev-iccbot
